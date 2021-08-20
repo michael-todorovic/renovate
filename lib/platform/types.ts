@@ -151,7 +151,7 @@ export interface Platform {
   getVulnerabilityAlerts(): Promise<VulnerabilityAlert[]>;
   getRawFile(
     fileName: string,
-    presetTag?: string,
+    packageTag?: string,
     repo?: string
   ): Promise<string | null>;
   getJsonFile(fileName: string, repo?: string): Promise<any | null>;
