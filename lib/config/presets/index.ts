@@ -121,11 +121,13 @@ export function parsePreset(input: string): ParsedPreset {
     presetSource = 'internal';
     [packageName, presetName] = str.split(':');
   } else if (str.startsWith(':')) {
+    logger.debug(`parsePreset startwith : : "${str}"`);
     // default namespace
     presetSource = 'internal';
     packageName = 'default';
     presetName = str.slice(1);
   } else if (str.startsWith('@')) {
+    logger.debug(`parsePreset startwith @ : "${str}"`);
     // scoped namespace
     [, packageName] = /(@.*?)(:|$)/.exec(str);
     str = str.slice(packageName.length);
@@ -138,6 +140,7 @@ export function parsePreset(input: string): ParsedPreset {
       presetName = str.slice(1);
     }
   } else if (str.includes('//')) {
+    logger.debug(`parsePreset includes //`);
     // non-scoped namespace with a subdirectory preset
     const re = /^([\w\-./]+?)\/\/(?:([\w\-./]+)\/)?([\w\-.]+)$/;
 
@@ -150,18 +153,24 @@ export function parsePreset(input: string): ParsedPreset {
     }
     [, packageName, presetPath, presetName] = re.exec(str);
   } else {
-    // non-scoped namespace
-    [, packageName] = /(.*?)(:|$)/.exec(str);
-    presetName = str.slice(packageName.length + 1);
+    logger.debug(`parsePreset non-scoped : "${str}"`);
+
+    [, packageName, , presetName, , presetTag] =
+      /(?<packageName>[^:=]+)((?::)(?<presetName>[^=]*))?((?:==)(?<presetTag>.+))?/.exec(
+        str
+      );
+
     if (presetSource === 'npm' && !packageName.startsWith('renovate-config-')) {
       packageName = `renovate-config-${packageName}`;
     }
-    if (presetName === '') {
+    if (presetName === '' || presetName == null) {
       presetName = 'default';
     }
+    logger.debug(
+      `parsePreset presetName: ${presetName}, presetTag: ${presetTag}`
+    );
   }
-  presetTag = '1.0.3';
-  logger.debug(`Found presetTag: ${presetTag}`);
+
   return {
     presetSource,
     presetPath,

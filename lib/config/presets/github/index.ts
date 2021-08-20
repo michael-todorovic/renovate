@@ -18,7 +18,12 @@ export async function fetchJSONFile(
   endpoint: string,
   presetTag: string
 ): Promise<Preset> {
-  const url = `${endpoint}repos/${repo}/contents/${fileName}?ref=${presetTag}`;
+  let ref = '';
+  if (presetTag != null) {
+    ref = `?ref=${presetTag}`;
+  }
+  const url = `${endpoint}repos/${repo}/contents/${fileName}${ref}`;
+  logger.trace(`Getting preset from ${url}`);
   let res: { body: { content: string } };
   try {
     res = await http.getJson(url);
@@ -63,7 +68,7 @@ export function getPreset({
   packageName: pkgName,
   presetName = 'default',
   presetPath,
-  presetTag = 'main',
+  presetTag,
 }: PresetConfig): Promise<Preset> {
   return getPresetFromEndpoint(
     pkgName,
