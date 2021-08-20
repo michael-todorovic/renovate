@@ -70,6 +70,7 @@ export function parsePreset(input: string): ParsedPreset {
   let presetPath: string;
   let packageName: string;
   let presetName: string;
+  let presetTag: string;
   let params: string[];
   if (str.startsWith('github>')) {
     presetSource = 'github';
@@ -159,7 +160,16 @@ export function parsePreset(input: string): ParsedPreset {
       presetName = 'default';
     }
   }
-  return { presetSource, presetPath, packageName, presetName, params };
+  presetTag = '1.0.3';
+  logger.debug(`Found presetTag: ${presetTag}`);
+  return {
+    presetSource,
+    presetPath,
+    packageName,
+    presetName,
+    presetTag,
+    params,
+  };
 }
 
 export async function getPreset(
@@ -175,12 +185,19 @@ export async function getPreset(
   if (newPreset === null) {
     return {};
   }
-  const { presetSource, packageName, presetPath, presetName, params } =
-    parsePreset(preset);
+  const {
+    presetSource,
+    packageName,
+    presetPath,
+    presetName,
+    presetTag,
+    params,
+  } = parsePreset(preset);
   let presetConfig = await presetSources[presetSource].getPreset({
     packageName,
     presetPath,
     presetName,
+    presetTag,
     baseConfig,
   });
   if (!presetConfig) {

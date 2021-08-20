@@ -151,9 +151,10 @@ async function getBranchProtection(
 
 export async function getRawFile(
   fileName: string,
+  presetTag: string,
   repo: string = config.repository
 ): Promise<string | null> {
-  const url = `repos/${repo}/contents/${fileName}`;
+  const url = `repos/${repo}/contents/${fileName}?ref=${presetTag}`;
   const res = await githubApi.getJson<{ content: string }>(url);
   const buf = res.body.content;
   const str = Buffer.from(buf, 'base64').toString();

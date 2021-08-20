@@ -149,7 +149,11 @@ export interface Platform {
   getIssueList(): Promise<Issue[]>;
   getIssue?(number: number, useCache?: boolean): Promise<Issue>;
   getVulnerabilityAlerts(): Promise<VulnerabilityAlert[]>;
-  getRawFile(fileName: string, repo?: string): Promise<string | null>;
+  getRawFile(
+    fileName: string,
+    presetTag?: string,
+    repo?: string
+  ): Promise<string | null>;
   getJsonFile(fileName: string, repo?: string): Promise<any | null>;
   initRepo(config: RepoParams): Promise<RepoResult>;
   getPrList(): Promise<Pr[]>;

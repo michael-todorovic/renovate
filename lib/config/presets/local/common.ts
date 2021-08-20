@@ -11,11 +11,12 @@ import {
 export async function fetchJSONFile(
   repo: string,
   fileName: string,
+  presetTag: string,
   _endpoint: string = null
 ): Promise<Preset> {
   let raw: string;
   try {
-    raw = await platform.getRawFile(fileName, repo);
+    raw = await platform.getRawFile(fileName, presetTag, repo);
   } catch (err) {
     // istanbul ignore if: not testable with nock
     if (err instanceof ExternalHostError) {
@@ -23,8 +24,8 @@ export async function fetchJSONFile(
     }
 
     logger.debug(
-      { err, repo, fileName },
-      `Failed to retrieve ${fileName} from repo ${repo}`
+      { err, repo, fileName, presetTag },
+      `Failed to retrieve ${fileName} from repo ${repo} with tag ${presetTag}`
     );
 
     throw new Error(PRESET_DEP_NOT_FOUND);
