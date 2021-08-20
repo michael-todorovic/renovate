@@ -70,7 +70,7 @@ export function parsePreset(input: string): ParsedPreset {
   let presetPath: string;
   let packageName: string;
   let presetName: string;
-  let presetTag: string;
+  let packageTag: string;
   let params: string[];
   if (str.startsWith('github>')) {
     presetSource = 'github';
@@ -155,8 +155,8 @@ export function parsePreset(input: string): ParsedPreset {
   } else {
     logger.debug(`parsePreset non-scoped : "${str}"`);
 
-    [, packageName, , presetName, , presetTag] =
-      /(?<packageName>[^:=]+)((?::)(?<presetName>[^=]*))?((?:==)(?<presetTag>.+))?/.exec(
+    [, packageName, , presetName, , packageTag] =
+      /(?<packageName>[^:=]+)((?::)(?<presetName>[^=]*))?((?:==)(?<packageTag>.+))?/.exec(
         str
       );
 
@@ -167,7 +167,7 @@ export function parsePreset(input: string): ParsedPreset {
       presetName = 'default';
     }
     logger.debug(
-      `parsePreset presetName: ${presetName}, presetTag: ${presetTag}`
+      `parsePreset presetName: ${presetName}, packageTag: ${packageTag}`
     );
   }
 
@@ -176,7 +176,7 @@ export function parsePreset(input: string): ParsedPreset {
     presetPath,
     packageName,
     presetName,
-    presetTag,
+    packageTag,
     params,
   };
 }
@@ -199,14 +199,14 @@ export async function getPreset(
     packageName,
     presetPath,
     presetName,
-    presetTag,
+    packageTag,
     params,
   } = parsePreset(preset);
   let presetConfig = await presetSources[presetSource].getPreset({
     packageName,
     presetPath,
     presetName,
-    presetTag,
+    packageTag,
     baseConfig,
   });
   if (!presetConfig) {
