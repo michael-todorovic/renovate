@@ -179,7 +179,7 @@ describe(getName(), () => {
           content: Buffer.from('{"from":"api"}').toString('base64'),
         });
       expect(
-        await github.getPresetFromEndpoint('some/repo', 'default', undefined)
+        await github.getPresetFromEndpoint('some/repo', 'default')
       ).toEqual({ from: 'api' });
       expect(httpMock.getTrace()).toMatchSnapshot();
     });

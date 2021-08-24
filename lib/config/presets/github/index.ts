@@ -68,7 +68,7 @@ export function getPreset({
   packageName: pkgName,
   presetName = 'default',
   presetPath,
-  packageTag,
+  packageTag = null,
 }: PresetConfig): Promise<Preset> {
   return getPresetFromEndpoint(
     pkgName,

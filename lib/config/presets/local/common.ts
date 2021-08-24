@@ -11,7 +11,7 @@ import {
 export async function fetchJSONFile(
   repo: string,
   fileName: string,
-  packageTag: string,
+  packageTag: string = null,
   _endpoint: string = null
 ): Promise<Preset> {
   let raw: string;

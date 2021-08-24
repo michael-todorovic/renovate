@@ -27,7 +27,7 @@ export function getPreset({
   packageName: pkgName,
   presetName = 'default',
   presetPath,
-  packageTag,
+  packageTag = null,
   baseConfig,
 }: PresetConfig): Promise<Preset> {
   const { platform, endpoint } = baseConfig;
