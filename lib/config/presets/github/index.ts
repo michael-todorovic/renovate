@@ -23,7 +23,7 @@ export async function fetchJSONFile(
     ref = `?ref=${packageTag}`;
   }
   const url = `${endpoint}repos/${repo}/contents/${fileName}${ref}`;
-  logger.debug(`Downloading preset from ${url}`);
+  logger.trace(`Preset URL is: ${url}`);
   let res: { body: { content: string } };
   try {
     res = await http.getJson(url);

@@ -65,6 +65,11 @@ export function replaceArgs(
 }
 
 export function parsePreset(input: string): ParsedPreset {
+  // https://regex101.com/r/vMTIpo/1
+  // @somescope/somepackagename=1.0.0:webapp(eslint)
+  // renovate-config-somepackagename=1.0.0:test(eslint)
+  // michael-todorovic/renovate-sharedconfig=1.0.3:docker
+  // (?<packageName>[^:=(]+)((?:=)(?<presetTag>[^:(]+))?((?::)(?<presetName>[^(]*))?((?:\()(?<presetParams>.*)(?:\)))?
   let str = input;
   let presetSource: string;
   let presetPath: string;
@@ -121,13 +126,11 @@ export function parsePreset(input: string): ParsedPreset {
     presetSource = 'internal';
     [packageName, presetName] = str.split(':');
   } else if (str.startsWith(':')) {
-    logger.debug(`parsePreset startwith : : "${str}"`);
     // default namespace
     presetSource = 'internal';
     packageName = 'default';
     presetName = str.slice(1);
   } else if (str.startsWith('@')) {
-    logger.debug(`parsePreset startwith @ : "${str}"`);
     // scoped namespace
     [, packageName] = /(@.*?)(:|$)/.exec(str);
     str = str.slice(packageName.length);
@@ -140,7 +143,6 @@ export function parsePreset(input: string): ParsedPreset {
       presetName = str.slice(1);
     }
   } else if (str.includes('//')) {
-    logger.debug(`parsePreset includes //`);
     // non-scoped namespace with a subdirectory preset
     const re = /^([\w\-./]+?)\/\/(?:([\w\-./]+)\/)?([\w\-.]+)$/;
 
@@ -153,12 +155,18 @@ export function parsePreset(input: string): ParsedPreset {
     }
     [, packageName, presetPath, presetName] = re.exec(str);
   } else {
-    logger.debug(`parsePreset non-scoped : "${str}"`);
-
-    [, packageName, , presetName, , packageTag] =
-      /(?<packageName>[^:=]+)((?::)(?<presetName>[^=]*))?((?:==)(?<packageTag>.+))?/.exec(
+    let matches =
+      /(?<packageName>[^:=]+)((?:=)(?<packageTag>[^:]+))?((?::)(?<presetName>.*))?/.exec(
         str
       );
+
+    packageName = matches.groups.packageName;
+    if ('packageTag' in matches.groups) {
+      packageTag = matches.groups.packageTag;
+    }
+    if ('presetName' in matches.groups) {
+      presetName = matches.groups.presetName;
+    }
 
     if (presetSource === 'npm' && !packageName.startsWith('renovate-config-')) {
       packageName = `renovate-config-${packageName}`;
@@ -166,9 +174,6 @@ export function parsePreset(input: string): ParsedPreset {
     if (presetName === '' || presetName == null) {
       presetName = 'default';
     }
-    logger.debug(
-      `parsePreset presetName: ${presetName}, packageTag: ${packageTag}`
-    );
   }
 
   return {
