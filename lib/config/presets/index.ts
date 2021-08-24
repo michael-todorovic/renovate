@@ -155,7 +155,7 @@ export function parsePreset(input: string): ParsedPreset {
     }
     [, packageName, presetPath, presetName] = re.exec(str);
   } else {
-    let matches =
+    const matches =
       /(?<packageName>[^:=]+)((?:=)(?<packageTag>[^:]+))?((?::)(?<presetName>.*))?/.exec(
         str
       );

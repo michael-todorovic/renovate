@@ -38,14 +38,14 @@ export async function fetchJSONFile(
   try {
     const urlEncodedRepo = encodeURIComponent(repo);
     const urlEncodedPkgName = encodeURIComponent(fileName);
-    if (packageTag != null) {
-      ref = `?ref=${packageTag}`;
-    } else {
+    if (packageTag == null) {
       const defaultBranchName = await getDefaultBranchName(
         urlEncodedRepo,
         endpoint
       );
       ref = `?ref=${defaultBranchName}`;
+    } else {
+      ref = `?ref=${packageTag}`;
     }
     url += `projects/${urlEncodedRepo}/repository/files/${urlEncodedPkgName}/raw${ref}`;
     logger.trace(`Preset URL is: ${url}`);
